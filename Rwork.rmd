@@ -1,0 +1,250 @@
+---
+title: 'PRACTICAL WORK OF R' 
+author: "AKSHAY SINGHAL"
+output:
+  
+  html_document:
+    theme : lumen
+    toc: TRUE
+    toc_float: TRUE 
+    number_sections: TRUE
+    df_print: paged
+  word_document: default
+  pdf_document: default
+---
+
+-                              NAME : AKSHAY SINGHAL
+
+
+
+# CSS 
+```{css, echo=TRUE}
+.watch-out {
+  background-color: lightgreen;
+  border: 10px solidred;
+  font-weight: bold;
+  font-size: 16px;
+  color: green;
+  style: 
+}
+```
+
+```{css, echo=TRUE}
+.watch-of {
+  background-color: red;
+  border: 10px solidred;
+  font-weight: bold;
+  font-size: 32px;
+  color: black;
+  style: 
+}
+```
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# SEX RATIO
+
+HERE WE HAVE DATA FOR SEX RATIO OF 7 UTs AND FOR INDIA.\
+
+SEX RATIO : THE SEX RATIO IS THE RATIO OF MALES TO FEMALES IN A POPULATION.IN MOST SEXUALLY REPRODUCING SPECIES, THE RATIO TENDS TO BE 1:1.
+\
+WE WILL HERE HAVE THE DATA OF SEX RATIO(NUMBER OF FEMALES FOR EVERY 1000 MALES) IN 3 PARTS. \
+-FIRST COLUMN IS SHOWING THE SEX RATIO OF TOTAL POPULATION(for that particular UT) : TP.\
+-SECOND COLUMN IS SHOWING THE SEX RATIO OF TOTAL URBAN POPULATION(for that particular UT) : TPU.\
+-THIRD COLUMN IS SHOWING THE SEX RATIO OF TOTAL RURAL POPULATION(for that particular UT) : TPR.\
+
+THE DATA IS TAKEN FROM CENSUS 2011. SOURCE FOR THE INFORMATION https://data.gov.in/ DATA.GOV.IN
+\
+\
+ IN THIS PRESENTATION WE WILL SEE USE OF SOME STATISTICAL COMMANDS, CREATING CONTIGENCY TABLES, USING COMMANDS THAT HELPS TO ANALYSING THE DATA.
+ 
+# DATA FRAME[ANSWER 1]
+```{r class.source='watch-out', echo=TRUE,comments=" ",}
+# importing same data but in different format from 2 different csv files using command read.csv()
+
+# importing database from csv file
+SrDF <- read.csv('sexratioDF.csv') 
+
+# importing database from csv file
+SrM <- read.csv('sexratioM.csv')
+```
+## FORMAT 1
+### ! let's see what we have imported !
+```{r class.source='watch-out', echo=TRUE,comments=" ",}
+# format 1
+SrDF 
+
+
+# STRUCTURE OF DATA FRAME TO GET A BRIEF WHAT OUR DATA CONSIST OF..
+str(SrDF)
+
+# COMMANDS WE HAVE TO SEE THE NAMES OF ALL THE DIMENSIONS i.e. NAMES OF ALL COLUMNS AND ROWS
+dimnames(SrDF)
+
+# WE CAN ONLY CHECK THE NAMES OF ALL THE COLUMNS BY USING THIS COMMAND
+colnames(SrDF)
+
+# NUMBER OF COLUMNS IN THE DATA SET
+ncol(SrDF)
+
+# WE CAN ONLY CHECK THE NAMES OF ALL ROWS BY USING THIS COMMAND
+rownames(SrDF)
+
+# NUMBER OF ROWS IN THE DATA SET
+nrow(SrDF)
+
+# THIS COMMAND TREAT EACH COLUMN OF THE DATA SET AS A SINGLE VECTOR AND GIVES THE SEQUENCE NUMBER OF COLUMNS
+seq(SrDF)
+
+
+# WE CAN ALSO CHANGE THE NAMES OF DIMENSIONS, HERE IS THE EXAMPLE WHERE WE ARE CHANGING ROW NAMES WITH THEIR RESPECTIVE DIRECTIONS.
+rownames(SrDF) <- c('IND','A&N','CH','D&N','D&D','LD','DL','PY')
+SrDF
+
+#PLOTS
+library(ggplot2)
+ggplot(data=SrDF,aes(x=STATE,y=TP,group=STATE,colour=STATE))+stat_smooth()+geom_boxplot()+xlab('UNION TERRITORIES')+ylab('TOAL POPULATION RATIO')
+
+ggplot(data=SrDF,aes(x=STATE,y=TPU,group=STATE,colour=STATE))+stat_smooth()+geom_boxplot()+xlab('UNION TERRITORIES')+ylab('URBAN POPULATION RATIO')
+SrDF['TPU']
+
+ggplot(data=SrDF,aes(x=STATE,y=TPR,group=STATE,colour=STATE))+stat_smooth()+geom_boxplot()+xlab('UNION TERRITORIES')+ylab('RURAL POPULATION RATIO')
+SrDF['TPR']
+```
+
+# SOME SIMPLE STATISTICAL COMMANDS[ANSWER 2]
+```{r class.source='watch-out', echo=TRUE,comments=" ",}
+
+
+# FINDING MAXIMUM VALUE
+max(SrDF[3:5]) # HERE [3:5] MEANS THAT WE ARE FINDING MAXIMUM VALUE BETWEEN 3RD TO 5TH COLUMN. HERE WE IGNORE THE FIRST TWO COLUMNS AS THEY ARE NON NUMERIC.
+
+# SIMILIARLY WE CAN FIND MINIMUM VALUE 
+min(SrDF[3:5])
+
+# MEAN OF THE WHOLE DATA
+mean(SrDF$TPR+SrDF$TPU+SrDF$TP)/3 
+
+# MEAN OF PARTICULAR COLUMN
+mean(SrDF$TPR) # AVERAGE SEX RATIO OF RURAL POPULATION OF ALL 7 SEVEN UTs. 
+
+mean(SrDF$TPU) # AVERAGE SEX RATIO OF URBAN POPULATION OF ALL 7 SEVEN UTs.
+
+# QUANTILE
+quantile(SrDF$TP)
+
+# SIMILIARLY WE HAVE 
+fivenum(SrDF$TP)
+
+# IN A SIMILIAR WAY WHEN WE USE MODE() COMMAND WE WILL HAVE THE TPYE WHICH IS REPEATING MOST IN THE COLUMN OF DATA FRAME.
+# SIMILIARLY WE HAVE MEDIAN() TO FIND THE MEDIAN.
+mode(SrDF$TP)
+
+# WE CAN ALSO CALCULATE STANDARD DEVIATION - sd(), VARIANCE - var().
+sd(SrDF$TP)
+```
+
+# SIMPLE CUMMULATIVE COMMANDS[ANSWER 3]
+```{r class.source='watch-out', echo=TRUE,comments=" ",}
+
+#LET US ASSUME THAT WE NEED TO CHECK WHICH UTs HAVE HIGHEST RATIO AND AMONG WHICH UTs i.e. WHO IS THE HIGHEST AMONG WHOM-WHOM. FOR THIS WE HAVE A COMMAND THAT WILL RUN ACROSS THE COLUMNS AND WILL RETURN THE HIGHEST VALUE TILL EACH ROW.
+cummax(SrDF[3:5])
+
+# SIMILIARLY WE CAN CALCULATE MIN VALUE
+cummin(SrDF[3:5])
+
+# SIMILIARLY WE HAVE COMMANDS WHICH RETURNS THE CUMMULATIVE SUM [cumsum()] and CUMULATIVE PRODUCT [cumprod()] 
+cumsum(SrDF[3:5])
+
+# WE CAN FIND THE SUM,MEAN OF EACH ROW AND COLUMN OF DATA SETS.
+mn <- rowMeans(SrDF[4:5])
+mn
+
+# CREATING DATA FRAME FOR COMPARISON 
+df <- data.frame('STATE'=SrDF$STATE,'MEANrt'=mn,'TP'=SrDF$TP)
+df
+```
+
+# SUMMARY COMMANDS FOR TABLE
+```{r class.source='watch-out', echo=TRUE,comments=" ",}
+# LIKE THIS WE HAVE SIMILIAR FUNCTION COMMANDS rowSums() - WHICH GIVES THE SUM OF EACH ROW. 
+rowSums(SrDF[3:5])
+
+# SIMILIARLY WE HAVE colSums() AND colMeans()
+colSums(SrDF[3:5])
+colMeans(SrDF[3:5])
+
+# GETTING SUMMARY OF THE DATA SET
+summary(SrDF)
+```
+
+# CONVERSIONS[ANSWER 4]
+```{r class.source='watch-out', echo=TRUE,comments=" ",}
+
+# TESTING FOR A TABLE OBJECT
+is.table(SrDF)         
+
+# FINDING CLASS OF THE OBJECT
+class(SrDF)
+
+#apply(SrDF,mean)[c('TP','TPR','TPU')]
+# DATA FRAME TO MATRIX
+M <- as.matrix(SrDF)
+M
+
+# DATA FRAME TO VECTOR
+V <- as.vector(SrDF)
+V
+
+# DATA FRAME TO TABLE
+
+t <- as.table(as.matrix(SrDF))  
+t
+
+
+# CREATING TABLE WITH SELECTED COLUMNS
+table(SrDF[,1],SrDF[,3],dnn = c('states','total rural population'))
+
+# ROTATTING DATA FRAME
+t(SrDF)  
+
+SrDF[1:3,c('TP','TPR')]
+```
+
+# FORMAT 2[ANSWER 5]
+```{r class.source='watch-out', echo=TRUE,comments=" ",}
+# format 2
+SrM
+
+# A BRIEF WHAT OUR DATA CONSIST OF..
+str(SrM)
+dimnames(SrM)
+colnames(SrM)
+rownames(SrM)
+
+
+
+# USING CROSS TABULATION COMMAND
+xtabs(RATIO~STATE+CATEGORY,SrM)
+
+# CREATING FLAT TABLE
+ftable(SrM)
+
+```
+
+
+
+!['FLAT TABLE'](ftable.png)
+
+\
+\
+\
+
+
+
+
+```{r class.source='watch-of', echo=TRUE,comments=" ",}
+#                 THANK YOU
+```
